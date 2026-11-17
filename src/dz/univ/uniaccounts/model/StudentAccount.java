@@ -1,5 +1,9 @@
 package dz.univ.uniaccounts.model;
 
+import dz.univ.uniaccounts.state.AccountState;
+import dz.univ.uniaccounts.state.AccountStatus;
+import dz.univ.uniaccounts.state.PendingState;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +13,8 @@ import java.util.List;
  *
  * Pattern: BUILDER   — Role: Product (built by StudentAccountBuilder)
  * Pattern: PROTOTYPE — Role: ConcretePrototype (knows how to copy itself)
+ * Pattern: STATE     — Role: Context (Work 2: delegates activate/suspend/close/login
+ *                      to its current AccountState object)
  *
  * Mandatory fields : id, fullName, email
  * Optional fields  : phone (null), level ("L1"), major, scholarship (false), courses (empty)
@@ -29,6 +35,11 @@ public class StudentAccount implements AccountPrototype {
     private final String major;
     private final boolean scholarship;
     private final List<String> courses;
+
+    // Work 2 - State: every account starts in PENDING. Because this is a field
+    // initializer, it also applies to copies made by the copy constructor:
+    // a student copied from a template is a NEW account, so it starts PENDING too.
+    private AccountState state = new PendingState();
 
     /**
      * Builder: package-private constructor, only StudentAccountBuilder (same package)
@@ -91,6 +102,32 @@ public class StudentAccount implements AccountPrototype {
         courses.add(course.trim());
     }
 
+    // ------------------------------------------------- Work 2 - State (Context)
+    // Each method delegates to the current state object, which either returns the
+    // next state or throws IllegalStateException if the operation is not allowed.
+    // No if/switch on the status here: the behaviour lives in the state classes.
+
+    public void activate() {
+        state = state.activate();
+    }
+
+    public void suspend() {
+        state = state.suspend();
+    }
+
+    public void close() {
+        state = state.close();
+    }
+
+    /** @throws IllegalStateException if the account cannot log in (only ACTIVE can). */
+    public void login() {
+        state.login();
+    }
+
+    public AccountStatus getStatus() {
+        return state.getStatus();
+    }
+
     // ---------------------------------------------------------------- getters
 
     public String getId() {
@@ -135,6 +172,7 @@ public class StudentAccount implements AccountPrototype {
                 + ", level=" + level
                 + ", major=" + major
                 + ", scholarship=" + scholarship
-                + ", courses=" + courses + "}";
+                + ", courses=" + courses
+                + ", status=" + getStatus() + "}";
     }
 }
