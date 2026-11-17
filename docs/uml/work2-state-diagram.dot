@@ -1,0 +1,20 @@
+digraph States {
+  graph [rankdir=LR, fontname="DejaVu Sans", bgcolor="white", pad=0.3, nodesep=0.7, ranksep=1.1];
+  node [fontname="DejaVu Sans", fontsize=12, shape=box, style="rounded,filled", fillcolor="#FFF3E0", color="#E65100", penwidth=1.4, margin="0.25,0.12"];
+  edge [fontname="DejaVu Sans Mono", fontsize=10, color="#37474F"];
+  start [shape=circle, width=0.22, label="", style=filled, fillcolor="#37474F"];
+  end [shape=doublecircle, width=0.18, label="", style=filled, fillcolor="#37474F"];
+  PENDING   [label=<<B>PENDING</B><BR/><FONT POINT-SIZE="9">login: refused</FONT>>];
+  ACTIVE    [label=<<B>ACTIVE</B><BR/><FONT POINT-SIZE="9">login: allowed</FONT>>, fillcolor="#E8F5E9", color="#2E7D32"];
+  SUSPENDED [label=<<B>SUSPENDED</B><BR/><FONT POINT-SIZE="9">login: refused</FONT>>];
+  CLOSED    [label=<<B>CLOSED</B><BR/><FONT POINT-SIZE="9">final: all refused</FONT>>, fillcolor="#ECEFF1", color="#455A64"];
+  start -> PENDING [label="create / import\n(Builder, Prototype, Adapter)"];
+  PENDING -> ACTIVE [label="activate()"];
+  ACTIVE -> SUSPENDED [label="suspend()"];
+  SUSPENDED -> ACTIVE [label="activate()\n(re-activation)"];
+  ACTIVE -> CLOSED [label="close()\n(graduation)"];
+  SUSPENDED -> CLOSED [label="close()"];
+  PENDING -> CLOSED [label="close()\n(withdrawal)"];
+  CLOSED -> end;
+  {rank=same; ACTIVE; }
+}

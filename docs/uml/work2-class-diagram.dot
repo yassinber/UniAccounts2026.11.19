@@ -1,0 +1,124 @@
+digraph UML {
+  graph [rankdir=TB, newrank=true, compound=true, fontname="DejaVu Sans", fontsize=11, nodesep=0.5, ranksep=0.7, splines=true, bgcolor="white", pad=0.3];
+  node  [shape=plaintext, fontname="DejaVu Sans", fontsize=10];
+  edge  [fontname="DejaVu Sans", fontsize=9, color="#37474F"];
+  subgraph cluster_facade {
+    label=<<B>Facade</B>>; labeljust=l; style="rounded,filled"; fillcolor="#FFFDE7"; color="#90A4AE"; fontsize=13;
+  "Work2Demo" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#F5F5F5"><FONT POINT-SIZE="9" COLOR="#1A5276">«Client»</FONT><BR/><B>Work2Demo</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ main(String[])<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "UniAccountsFacade" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#F5F5F5"><FONT POINT-SIZE="9" COLOR="#1A5276">«Facade»</FONT><BR/><B>UniAccountsFacade</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- repository, audit, templates<BR ALIGN="LEFT"/>- events, exporter, legacySource<BR ALIGN="LEFT"/>- university, servicesByAccount<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ registerStudent(...) / registerFromTemplate(...)<BR ALIGN="LEFT"/>+ activate / suspend / close / login(id) : boolean<BR ALIGN="LEFT"/>+ importLegacyAccounts() : ImportReport<BR ALIGN="LEFT"/>+ export(format) : String<BR ALIGN="LEFT"/>+ addFaculty / addDepartment / addGroup / assignToGroup<BR ALIGN="LEFT"/>+ countAccounts(unit) : int<BR ALIGN="LEFT"/>+ subscribe(id, services...) : StudentServices<BR ALIGN="LEFT"/>+ printDashboard() / printAuditLog()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "ImportReport" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#F5F5F5"><B>ImportReport</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- importedIds, rejected : List&lt;String&gt;<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  }
+  subgraph cluster_creational {
+    label=<<B>Work 1 — Builder · Singleton · Prototype</B>>; labeljust=l; style="rounded,filled"; fillcolor="#E3F2FD"; color="#90A4AE"; fontsize=13;
+  "StudentAccountBuilder" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E3F2FD"><FONT POINT-SIZE="9" COLOR="#1A5276">«Builder»</FONT><BR/><B>StudentAccountBuilder</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- id, fullName, email<BR ALIGN="LEFT"/>- phone, level, major, scholarship, courses<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ level(..) / major(..) / addCourse(..) ...<BR ALIGN="LEFT"/>+ build() : StudentAccount<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "StudentAccount" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E3F2FD"><FONT POINT-SIZE="9" COLOR="#1A5276">«Product · ConcretePrototype · State Context»</FONT><BR/><B>StudentAccount</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- id, fullName, email, phone, level<BR ALIGN="LEFT"/>- major, scholarship, courses<BR ALIGN="LEFT"/>- state : AccountState<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ copy() / copyWithIdentity(id, name, email)<BR ALIGN="LEFT"/>+ activate() / suspend() / close() / login()<BR ALIGN="LEFT"/>+ getStatus() : AccountStatus<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "AccountPrototype" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E3F2FD"><FONT POINT-SIZE="9">«interface»</FONT><BR/><FONT POINT-SIZE="9" COLOR="#1A5276">«Prototype»</FONT><BR/><B><I>AccountPrototype</I></B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ copy() : StudentAccount<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "AccountTemplateRegistry" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E3F2FD"><FONT POINT-SIZE="9" COLOR="#1A5276">«Prototype registry»</FONT><BR/><B>AccountTemplateRegistry</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- templates : Map<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ register(key, account)<BR ALIGN="LEFT"/>+ createFrom(key, id, name, email)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "AccountRepository" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E3F2FD"><FONT POINT-SIZE="9" COLOR="#1A5276">«Singleton»</FONT><BR/><B>AccountRepository</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getInstance()  {static}<BR ALIGN="LEFT"/>+ save / findById / findAll / count<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "AuditLogger" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E3F2FD"><FONT POINT-SIZE="9" COLOR="#1A5276">«Singleton»</FONT><BR/><B>AuditLogger</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getInstance()  {static}<BR ALIGN="LEFT"/>+ log(action, details)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_state {
+    label=<<B>State</B>>; labeljust=l; style="rounded,filled"; fillcolor="#FFF3E0"; color="#90A4AE"; fontsize=13;
+  "AccountState" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9">«interface»</FONT><BR/><FONT POINT-SIZE="9" COLOR="#1A5276">«State»</FONT><BR/><B><I>AccountState</I></B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getStatus() : AccountStatus<BR ALIGN="LEFT"/>+ activate() / suspend() / close() : AccountState<BR ALIGN="LEFT"/>+ login()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "PendingState" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteState»</FONT><BR/><B>PendingState</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "ActiveState" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteState»</FONT><BR/><B>ActiveState</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "SuspendedState" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteState»</FONT><BR/><B>SuspendedState</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "ClosedState" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteState»</FONT><BR/><B>ClosedState</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  }
+  subgraph cluster_observer {
+    label=<<B>Observer</B>>; labeljust=l; style="rounded,filled"; fillcolor="#FFF3E0"; color="#90A4AE"; fontsize=13;
+  "AccountEventPublisher" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«Subject»</FONT><BR/><B>AccountEventPublisher</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- observers : List&lt;AccountObserver&gt;<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ attach(o) / detach(o)<BR ALIGN="LEFT"/>+ publish(type, account)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "AccountObserver" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9">«interface»</FONT><BR/><FONT POINT-SIZE="9" COLOR="#1A5276">«Observer»</FONT><BR/><B><I>AccountObserver</I></B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ update(AccountEvent)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "AuditObserver" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteObserver»</FONT><BR/><B>AuditObserver</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "EmailNotifier" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteObserver»</FONT><BR/><B>EmailNotifier</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "AdminDashboard" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteObserver»</FONT><BR/><B>AdminDashboard</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- counts : EnumMap<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "AccountEvent" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><B>AccountEvent</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- type : EventType<BR ALIGN="LEFT"/>- account : StudentAccount<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  }
+  subgraph cluster_strategy {
+    label=<<B>Strategy</B>>; labeljust=l; style="rounded,filled"; fillcolor="#FFF3E0"; color="#90A4AE"; fontsize=13;
+  "AccountExporter" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«Context»</FONT><BR/><B>AccountExporter</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- strategy : ExportStrategy<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ setStrategy(s)<BR ALIGN="LEFT"/>+ export(accounts) : String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "ExportStrategy" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9">«interface»</FONT><BR/><FONT POINT-SIZE="9" COLOR="#1A5276">«Strategy»</FONT><BR/><B><I>ExportStrategy</I></B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ export(accounts) : String<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "CsvExport" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteStrategy»</FONT><BR/><B>CsvExport</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "JsonExport" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#FFF3E0"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteStrategy»</FONT><BR/><B>JsonExport</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  }
+  subgraph cluster_adapter {
+    label=<<B>Adapter</B>>; labeljust=l; style="rounded,filled"; fillcolor="#E8F5E9"; color="#90A4AE"; fontsize=13;
+  "StudentSource" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9">«interface»</FONT><BR/><FONT POINT-SIZE="9" COLOR="#1A5276">«Target»</FONT><BR/><B><I>StudentSource</I></B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ loadAccounts() : List&lt;StudentAccount&gt;<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "LegacyStudentAdapter" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9" COLOR="#1A5276">«Adapter»</FONT><BR/><B>LegacyStudentAdapter</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- legacy : LegacyStudentSystem<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ loadAccounts()<BR ALIGN="LEFT"/>+ getRejectedRecords()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "LegacyStudentSystem" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#ECEFF1"><FONT POINT-SIZE="9" COLOR="#1A5276">«Adaptee (given, external)»</FONT><BR/><B>LegacyStudentSystem</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ fetchRecords() : List&lt;String&gt;<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_composite {
+    label=<<B>Composite</B>>; labeljust=l; style="rounded,filled"; fillcolor="#E8F5E9"; color="#90A4AE"; fontsize=13;
+  "UniversityComponent" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9" COLOR="#1A5276">«Component»</FONT><BR/><B><I>UniversityComponent</I></B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ countAccounts() : int<BR ALIGN="LEFT"/>+ print(indent)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "CompositeUnit" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9" COLOR="#1A5276">«Composite»</FONT><BR/><B><I>CompositeUnit</I></B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- children : List<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ add(c) / remove(c)<BR ALIGN="LEFT"/>+ countAccounts() = Σ children<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "AccountLeaf" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9" COLOR="#1A5276">«Leaf»</FONT><BR/><B>AccountLeaf</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">- account : StudentAccount<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ countAccounts() = 1<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "University" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><B>University</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "Faculty" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><B>Faculty</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "Department" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><B>Department</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "StudentGroup" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><B>StudentGroup</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ addAccount(a)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  }
+  subgraph cluster_decorator {
+    label=<<B>Decorator</B>>; labeljust=l; style="rounded,filled"; fillcolor="#E8F5E9"; color="#90A4AE"; fontsize=13;
+  "StudentServices" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9">«interface»</FONT><BR/><FONT POINT-SIZE="9" COLOR="#1A5276">«Component»</FONT><BR/><B><I>StudentServices</I></B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT">+ getDescription()<BR ALIGN="LEFT"/>+ canAccess(service)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+  "BasicServices" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteComponent»</FONT><BR/><B>BasicServices</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "ServiceDecorator" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9" COLOR="#1A5276">«Decorator»</FONT><BR/><B><I>ServiceDecorator</I></B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"># wrapped : StudentServices<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "LibraryService" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteDecorator»</FONT><BR/><B>LibraryService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "RestaurantService" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteDecorator»</FONT><BR/><B>RestaurantService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  "InternetService" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4"><TR><TD BGCOLOR="#E8F5E9"><FONT POINT-SIZE="9" COLOR="#1A5276">«ConcreteDecorator»</FONT><BR/><B>InternetService</B></TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR><TR><TD ALIGN="LEFT" BALIGN="LEFT"> </TD></TR></TABLE>>];
+  }
+  "Work2Demo" -> "UniAccountsFacade" [arrowhead=vee, style=dashed, label="uses only"];
+  "UniAccountsFacade" -> "ImportReport" [arrowhead=vee, style=dashed, label="creates"];
+  "UniAccountsFacade" -> "AccountRepository" [arrowhead=vee, label=""];
+  "UniAccountsFacade" -> "AuditLogger" [arrowhead=vee, label=""];
+  "UniAccountsFacade" -> "AccountTemplateRegistry" [arrowhead=vee, label=""];
+  "UniAccountsFacade" -> "AccountEventPublisher" [arrowhead=vee, label=""];
+  "UniAccountsFacade" -> "AccountExporter" [arrowhead=vee, label=""];
+  "UniAccountsFacade" -> "StudentSource" [arrowhead=vee, label=""];
+  "UniAccountsFacade" -> "University" [arrowhead=vee, label=""];
+  "UniAccountsFacade" -> "StudentServices" [arrowhead=vee, style=dashed, label="builds chain"];
+  "StudentAccountBuilder" -> "StudentAccount" [arrowhead=vee, style=dashed, label="«creates»"];
+  "StudentAccount" -> "AccountPrototype" [arrowhead=onormal, style=dashed, label=""];
+  "AccountTemplateRegistry" -> "StudentAccount" [arrowtail=odiamond, dir=back, label="*"];
+  "AccountRepository" -> "StudentAccount" [arrowtail=odiamond, dir=back, label="*"];
+  "AccountRepository" -> "AuditLogger" [arrowhead=vee, style=dashed, label="log"];
+  "StudentAccount" -> "AccountState" [arrowhead=vee, label="state"];
+  "PendingState" -> "AccountState" [arrowhead=onormal, style=dashed, label=""];
+  "ActiveState" -> "AccountState" [arrowhead=onormal, style=dashed, label=""];
+  "SuspendedState" -> "AccountState" [arrowhead=onormal, style=dashed, label=""];
+  "ClosedState" -> "AccountState" [arrowhead=onormal, style=dashed, label=""];
+  "AccountEventPublisher" -> "AccountObserver" [arrowtail=odiamond, dir=back, label="*"];
+  "AuditObserver" -> "AccountObserver" [arrowhead=onormal, style=dashed, label=""];
+  "EmailNotifier" -> "AccountObserver" [arrowhead=onormal, style=dashed, label=""];
+  "AdminDashboard" -> "AccountObserver" [arrowhead=onormal, style=dashed, label=""];
+  "AccountEventPublisher" -> "AccountEvent" [arrowhead=vee, style=dashed, label="sends"];
+  "AuditObserver" -> "AuditLogger" [arrowhead=vee, style=dashed, label="log"];
+  "AccountExporter" -> "ExportStrategy" [arrowhead=vee, label="strategy"];
+  "CsvExport" -> "ExportStrategy" [arrowhead=onormal, style=dashed, label=""];
+  "JsonExport" -> "ExportStrategy" [arrowhead=onormal, style=dashed, label=""];
+  "LegacyStudentAdapter" -> "StudentSource" [arrowhead=onormal, style=dashed, label=""];
+  "LegacyStudentAdapter" -> "LegacyStudentSystem" [arrowhead=vee, label="adaptee"];
+  "LegacyStudentAdapter" -> "StudentAccountBuilder" [arrowhead=vee, style=dashed, label="reuses"];
+  "CompositeUnit" -> "UniversityComponent" [arrowhead=onormal, label=""];
+  "AccountLeaf" -> "UniversityComponent" [arrowhead=onormal, label=""];
+  "CompositeUnit" -> "UniversityComponent" [arrowtail=odiamond, dir=back, label="children *"];
+  "University" -> "CompositeUnit" [arrowhead=onormal, label=""];
+  "Faculty" -> "CompositeUnit" [arrowhead=onormal, label=""];
+  "Department" -> "CompositeUnit" [arrowhead=onormal, label=""];
+  "StudentGroup" -> "CompositeUnit" [arrowhead=onormal, label=""];
+  "AccountLeaf" -> "StudentAccount" [arrowhead=vee, label="wraps"];
+  "BasicServices" -> "StudentServices" [arrowhead=onormal, style=dashed, label=""];
+  "ServiceDecorator" -> "StudentServices" [arrowhead=onormal, style=dashed, label=""];
+  "ServiceDecorator" -> "StudentServices" [arrowtail=odiamond, dir=back, label="wrapped"];
+  "LibraryService" -> "ServiceDecorator" [arrowhead=onormal, label=""];
+  "RestaurantService" -> "ServiceDecorator" [arrowhead=onormal, label=""];
+  "InternetService" -> "ServiceDecorator" [arrowhead=onormal, label=""];
+  "AccountEvent" -> "CsvExport" [style=invis, weight=4];
+  "AccountObserver" -> "JsonExport" [style=invis, weight=4];
+  "AccountState" -> "LegacyStudentAdapter" [style=invis, weight=4];
+  "ExportStrategy" -> "Faculty" [style=invis, weight=4];
+  "ExportStrategy" -> "University" [style=invis, weight=4];
+  "ExportStrategy" -> "StudentGroup" [style=invis, weight=4];
+  "StudentSource" -> "LibraryService" [style=invis, weight=4];
+  "LegacyStudentSystem" -> "InternetService" [style=invis, weight=4];
+  "LegacyStudentSystem" -> "RestaurantService" [style=invis, weight=4];
+}
